@@ -28,7 +28,7 @@ cmake_minimum_required(VERSION 3.2)
 # ######################################################################### #
 
 # Project name
-project(CeCe-gui VERSION 0.6.0 LANGUAGES CXX)
+project(cece-gui VERSION 0.6.0 LANGUAGES CXX)
 
 # C++11 standard
 set(CMAKE_CXX_STANDARD 11)
@@ -43,11 +43,11 @@ include_directories(
 
 # ######################################################################### #
 
-if (NOT TARGET CeCe)
+if (NOT TARGET cece)
     add_subdirectory(CeCe)
 endif ()
 
-if (NOT TARGET CeCe-plugins)
+if (NOT TARGET cece-plugins)
     add_subdirectory(plugins)
 endif()
 
@@ -68,7 +68,7 @@ find_package(Qt5PrintSupport)
 if (DEV_PLUGINS)
     # Directory is in build directory
     add_definitions(
-        -DDIR_PLUGINS="${CMAKE_BINARY_DIR}/${DIR_PLUGINS}"
+        -DDIR_PLUGINS="${CMAKE_BINARY_DIR}/plugins"
     )
 endif ()
 
@@ -155,7 +155,7 @@ endif ()
 
 # Use the Widgets module from Qt 5.
 target_link_libraries(${PROJECT_NAME}
-    CeCe
+    cece
     Qt5::Widgets
     Qt5::OpenGL
     Qt5::PrintSupport
