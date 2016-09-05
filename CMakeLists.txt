@@ -23,32 +23,52 @@
 #                                                                           #
 # ######################################################################### #
 
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.1)
 
 # ######################################################################### #
 
 # Project name
-project(cece-gui VERSION 0.6.0 LANGUAGES CXX)
-
-# C++11 standard
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_EXTENSIONS Off)
-set(CMAKE_CXX_STANDARD_REQUIRED On)
-set(CMAKE_POSITION_INDEPENDENT_CODE On)
-
-include_directories(
-    CeCe
-    ${CMAKE_CURRENT_BINARY_DIR}/CeCe
+project(cece-gui
+    VERSION 0.6.0
+    LANGUAGES CXX
 )
 
 # ######################################################################### #
 
 if (NOT TARGET cece)
-    add_subdirectory(CeCe)
+    if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/CeCe-core/CMakeLists.txt")
+        find_package(Git REQUIRED)
+        execute_process(
+            COMMAND ${GIT_EXECUTABLE} submodule update --init CeCe-core
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        )
+    endif()
+
+    add_subdirectory(CeCe-core)
+
+    find_program(CCACHE_FOUND ccache)
+    if (CCACHE_FOUND)
+        set_property(DIRECTORY CeCe-core PROPERTY RULE_LAUNCH_COMPILE ccache)
+        set_property(DIRECTORY CeCe-core PROPERTY RULE_LAUNCH_LINK ccache)
+    endif()
 endif ()
 
 if (NOT TARGET cece-plugins)
-    add_subdirectory(plugins)
+    if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/CeCe-plugins/CMakeLists.txt")
+        find_package(Git REQUIRED)
+        execute_process(
+            COMMAND ${GIT_EXECUTABLE} submodule update --init CeCe-plugins
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        )
+    endif()
+
+    add_subdirectory(CeCe-plugins)
+
+    find_program(CCACHE_FOUND ccache)
+    if (CCACHE_FOUND)
+        set_property(DIRECTORY CeCe-plugins PROPERTY RULE_LAUNCH_COMPILE ccache)
+        set_property(DIRECTORY CeCe-plugins PROPERTY RULE_LAUNCH_LINK ccache)
+    endif()
 endif()
 
 # ######################################################################### #
@@ -65,73 +85,65 @@ find_package(Qt5PrintSupport)
 
 # ######################################################################### #
 
-if (DEV_PLUGINS)
-    # Directory is in build directory
-    add_definitions(
-        -DDIR_PLUGINS="${CMAKE_BINARY_DIR}/plugins"
-    )
-endif ()
-
 # Configure version file
-configure_file(version.hpp.in version.hpp @ONLY)
-include_directories(${PROJECT_BINARY_DIR})
+configure_file(src/version.hpp.in version.hpp @ONLY)
 
 # ######################################################################### #
 
 # Sources
 set(SRCS
-    main.cpp
-    MainWindow.hpp
-    MainWindow.cpp
-    MainWindow.ui
-    AboutDialog.hpp
-    AboutDialog.cpp
-    AboutDialog.ui
-    PlotCreateDialog.hpp
-    PlotCreateDialog.cpp
-    PlotCreateDialog.ui
-    Simulator.hpp
-    Simulator.cpp
-    VisualizationWidget.hpp
-    VisualizationWidget.cpp
-    LogStream.hpp
-    LogStream.cpp
-    XmlHighlighter.hpp
-    XmlHighlighter.cpp
-    icons.qrc
-    PlotWidget.hpp
-    PlotWidget.cpp
-    PlotCustomizationDialog.hpp
-    PlotCustomizationDialog.cpp
+    src/main.cpp
+    src/MainWindow.hpp
+    src/MainWindow.cpp
+    src/AboutDialog.hpp
+    src/AboutDialog.cpp
+    src/PlotCreateDialog.hpp
+    src/PlotCreateDialog.cpp
+    src/Simulator.hpp
+    src/Simulator.cpp
+    src/VisualizationWidget.hpp
+    src/VisualizationWidget.cpp
+    src/LogStream.hpp
+    src/LogStream.cpp
+    src/XmlHighlighter.hpp
+    src/XmlHighlighter.cpp
+    src/PlotWidget.hpp
+    src/PlotWidget.cpp
+    src/PlotCustomizationDialog.hpp
+    src/PlotCustomizationDialog.cpp
+    src/DataExportPlot.hpp
+    src/DataExportPlot.cpp
+    src/DataExportPlotFactory.hpp
+    src/DataExportPlotFactory.cpp
+    src/qcustomplot.h
+    src/qcustomplot.cpp
 
-    DataExportPlot.hpp
-    DataExportPlot.cpp
-    DataExportPlotFactory.hpp
-    DataExportPlotFactory.cpp
+    src/MainWindow.ui
+    src/AboutDialog.ui
+    src/PlotCreateDialog.ui
 
-    qcustomplot.h
-    qcustomplot.cpp
+    resources/icons.qrc
 )
 
 if (APPLE)
-    set(SRCS ${SRCS} icons/${APP_NAME}.icns)
-    set_source_files_properties(icons/${APP_NAME}.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+    set(SRCS ${SRCS} resources/icons.icns)
+    set_source_files_properties(resources/icons.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 endif ()
 
 if (WIN32)
-    configure_file(version.rc version.rc @ONLY NEWLINE_STYLE WIN32)
+    configure_file(resources/version.rc version.rc @ONLY NEWLINE_STYLE WIN32)
     set(SRCS ${SRCS} ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
 endif ()
 
 # ######################################################################### #
 
-set(MACOSX_BUNDLE_BUNDLE_NAME "${APP_NAME}-gui")
-set(MACOSX_BUNDLE_BUNDLE_VERSION "${VERSION}")
-set(MACOSX_BUNDLE_LONG_VERSION_STRING "${VERSION}")
-set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${VERSION}")
-set(MACOSX_BUNDLE_COPYRIGHT "Copyright (c) 2015 Georgiev Lab")
-set(MACOSX_BUNDLE_GUI_IDENTIFIER "cz.zcu.ccy.${APP_NAME}")
-set(MACOSX_BUNDLE_ICON_FILE "${APP_NAME}.icns")
+set(MACOSX_BUNDLE_BUNDLE_NAME "CeCe-gui")
+set(MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}")
+set(MACOSX_BUNDLE_LONG_VERSION_STRING "${PROJECT_VERSION}")
+set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}")
+set(MACOSX_BUNDLE_COPYRIGHT "Copyright (c) 2016 Georgiev Lab")
+set(MACOSX_BUNDLE_GUI_IDENTIFIER "cz.zcu.ccy.cece")
+set(MACOSX_BUNDLE_ICON_FILE "icons.icns")
 
 # ######################################################################### #
 
@@ -142,12 +154,29 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
 
 # ######################################################################### #
 
-# Hide symbols
-set_target_properties(${PROJECT_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
+target_include_directories(${PROJECT_NAME}
+    PRIVATE ${PROJECT_BINARY_DIR}
+    PRIVATE ${PROJECT_SOURCE_DIR}/src
+)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    CXX_STANDARD 11
+    CXX_EXTENSIONS Off
+    CXX_STANDARD_REQUIRED On
+)
 
 if (APPLE)
     set_target_properties(${PROJECT_NAME} PROPERTIES
-        MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Resources/Info.plist.in
+        MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/resources/Info.plist.in
+    )
+endif ()
+
+if (CECE_PLUGINS_DEV)
+    get_target_property(DIR cece-plugins OUTPUT_DIRECTORY)
+
+    # Directory is in build directory
+    target_compile_definitions(${PROJECT_NAME}
+        PRIVATE -DDIR_PLUGINS="${DIR}"
     )
 endif ()
 
@@ -166,5 +195,83 @@ if (UNIX AND NOT APPLE)
         -pthread
     )
 endif ()
+
+# ######################################################################### #
+
+if (UNIX AND NOT APPLE)
+    set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "\$ORIGIN/../lib")
+elseif (APPLE)
+    set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "@loader_path/../lib")
+endif ()
+
+# ######################################################################### #
+
+install(TARGETS ${PROJECT_NAME}
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+)
+
+install(FILES LICENSE.txt Copyright.txt README.md
+    DESTINATION .
+)
+
+# ######################################################################### #
+
+include(InstallRequiredSystemLibraries)
+
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "CeCe GUI application")
+set(CPACK_PACKAGE_VENDOR "Georgiev Lab")
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
+set(CPACK_PACKAGE_NAME CeCe-gui)
+set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+set(CPACK_PACKAGE_CONTACT "Jiří Fatka <fatkaj@ntis.zcu.cz>")
+
+find_package(Git)
+if (GIT_FOUND)
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} describe --exact-match --tags
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_TAG
+        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_COMMIT
+        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} rev-parse --abbrev-ref HEAD
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_BRANCH
+        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+endif ()
+
+message("TAG: ${GIT_TAG}")
+message("COMMIT: ${GIT_COMMIT}")
+message("BRANCH: ${GIT_BRANCH}")
+
+if (NOT GIT_TAG AND GIT_COMMIT AND GIT_BRANCH)
+    string(SUBSTRING "${GIT_COMMIT}" 0 7 COMMIT)
+    set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_NAME}-${GIT_BRANCH}-${COMMIT}")
+endif ()
+
+# ######################################################################### #
+
+set(CPACK_STRIP_FILES "${INSTALL_DIR_RUNTIME}/${CMAKE_PROJECT_NAME}")
+
+# ######################################################################### #
+
+include(CPack)
 
 # ######################################################################### #

@@ -1,0 +1,6 @@
+[submodule "CeCe-core"]
+	path = CeCe-core
+	url = ../CeCe-core
+[submodule "CeCe-plugins"]
+	path = CeCe-plugins
+	url = ../CeCe-plugins

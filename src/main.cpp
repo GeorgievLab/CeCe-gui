@@ -48,7 +48,7 @@
  */
 cece::String getPluginsDirectory(cece::FilePath app, cece::FilePath dir) noexcept
 {
-    return (app.remove_filename() / dir).string();
+    return (app.getParentPath() / dir).toString();
 }
 
 /* ************************************************************************ */

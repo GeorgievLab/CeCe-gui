@@ -41,7 +41,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="icons.qrc">:/cece/images/logo.png</pixmap>
+         <pixmap resource="../resources/icons.qrc">:/cece/images/logo.png</pixmap>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -170,6 +170,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../resources/icons.qrc"/>
   <include location="icons.qrc"/>
  </resources>
  <connections>
