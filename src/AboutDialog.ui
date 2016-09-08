@@ -10,6 +10,24 @@
     <height>346</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>324</width>
+    <height>346</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>324</width>
+    <height>346</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>About</string>
   </property>
@@ -171,7 +189,7 @@
  </widget>
  <resources>
   <include location="../resources/icons.qrc"/>
-  <include location="icons.qrc"/>
+  <include location="../resources/icons.qrc"/>
  </resources>
  <connections>
   <connection>
