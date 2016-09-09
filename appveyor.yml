@@ -31,10 +31,13 @@ environment:
     matrix:
         - GENERATOR: Visual Studio 14 2015 Win64
           DEPLOY: On
+          QTDIR: C:\Qt\5.7\msvc2015_64
         - GENERATOR: Visual Studio 14 2015
           DEPLOY: Off
+          QTDIR: C:\Qt\5.7\msvc2015
         - GENERATOR: MinGW Makefiles
           DEPLOY: Off
+          QTDIR: C:\Qt\5.7\mingw53_32
 
 matrix:
     allow_failures:
@@ -48,11 +51,11 @@ branches:
 install:
     - git submodule update --init --recursive
     - SET PATH=%PATH:C:\Program Files\Git\usr\bin;=%
-    - SET PATH=C:\MinGW\bin;%PATH%
+    - SET PATH=C:\mingw-w64\i686-5.3.0-posix-dwarf-rt_v4-rev0\mingw32\bin;%PATH%
 
 before_build:
     - md build
-    - pushd build && cmake -G "%GENERATOR%" -DCMAKE_BUILD_TYPE=Release .. & popd
+    - pushd build && cmake -G "%GENERATOR%" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="%QTDIR%" .. & popd
 
 build_script:
     - pushd build && cmake --build . --config Release & popd
