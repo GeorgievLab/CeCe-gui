@@ -99,9 +99,6 @@ void Simulator::simulationLoad(QString type, QString source, QString filename) n
     const String tp = type.toStdString();
     const String file = filename.toStdString();
 
-    // Enable XML plugin by default
-    m_context.importPlugin("xml");
-
     // Create simulation
     try
     {
