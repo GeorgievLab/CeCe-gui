@@ -1,0 +1,14 @@
+{
+    "package": {
+        "name": "CeCe-gui",
+        "repo": "CeCe-nighty",
+        "subject": "georgievlab"
+    },
+    "version": {
+        "name": "@PROJECT_VERSION@"
+    },
+    "files": [
+        {"includePattern": "build/(CeCe-gui.*.tar.gz)", "uploadPattern":"\$1"}
+    ],
+    "publish": true
+}

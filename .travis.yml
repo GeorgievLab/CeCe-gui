@@ -47,6 +47,8 @@ matrix:
         - os: osx
           compiler: gcc
           env: DEPLOY=Off
+    allow_failures:
+        - os: osx
 
 addons:
     apt:
@@ -81,5 +83,21 @@ before_script:
 
 script:
     - VERBOSE=1 cmake --build build
+
+before_deploy:
+    - pushd build
+    - cpack -G TGZ
+    - popd
+
+deploy:
+    provider: bintray
+    file: "build/descriptor.json"
+    user: "ntsfka"
+    key:
+        secure: "C8fGXfLG+t3isYNN9fwPUG6kqmOFbpigvC3wSH22shSF+b45e2ChUPIV6wAHWPSSi4awu+HFNpxw0o5QALn5tE3KQft/tNXQ2pgDBpqLbihDv4OZQm/PPM9Kse1fZ5/lsdkt7g9CzelQgEYOZrvOg0MX2yLRTi4YCFAqQbiJKguBjrNlGly96TfJpD/gPMswdOOtWucSryriFNLc5yUcElXj2b2GdAXC0uldfKT7c3PNJ7D2FUgpCUC10ktTVT+XAJu6H0Blbffqu+FXeSGSmI1lYnRtqxKXJ85+MvrEpZ6kd4hrrD89ZjzMeP5O1i6C/QCvIZxOLul5Uy7TgnRYA5ua/TsouANCeZPO0poN0QcA/iOIrMaolz/B1l0slodcnOWHKMchd6lJiRp90kGREmAX6es4rgIQL8b/kg9lIJ6FLv7363X9H8tOW6jKKLeGaLI8+/ni4p/tQN1RDS7WFbncd9Fd+T9F51ALPfJAEQyvJe1e0tzwwZgVdIozAH/PsUZH9Ql8DIBLfk2IRRPz1IZwjVRRGKv52+ZPnN8ECaA2I1F2dxeYb9/pK2RUBVD/SCCAH4A0kquso1/rZBf8O8Lk2KPWKleF3av3p/prrwBq7Q9g3I3SAI52ZXlY/bbBc2kccCLnF5bS1VeDAeD/ZiK+b07wK/camQY8CPFx+lc="
+    skip_cleanup: true
+    on:
+        branch: master
+        condition: "$DEPLOY = On"
 
 # ######################################################################### #
