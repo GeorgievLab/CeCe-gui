@@ -215,6 +215,20 @@ install(FILES LICENSE.txt Copyright.txt README.md
     DESTINATION .
 )
 
+if (WIN32)
+    find_file(QT5_CORE_DLL Qt5Core.dll HINTS ${CMAKE_PREFIX_PATH}\\bin)
+    find_file(QT5_GUI_DLL Qt5Gui.dll HINTS ${CMAKE_PREFIX_PATH}\\bin)
+    find_file(QT5_WIDGETS_DLL Qt5Widgets.dll HINTS ${CMAKE_PREFIX_PATH}\\bin)
+    find_file(QT5_OPENGL_DLL Qt5OpenGL.dll HINTS ${CMAKE_PREFIX_PATH}\\bin)
+    find_file(QT5_PRINTSUPPORT_DLL Qt5PrintSupport.dll HINTS ${CMAKE_PREFIX_PATH}\\bin)
+
+    if (QT5_CORE_DLL AND QT5_GUI_DLL AND QT5_WIDGETS_DLL AND QT5_OPENGL_DLL AND QT5_PRINTSUPPORT_DLL)
+        install(FILES ${QT5_CORE_DLL} ${QT5_GUI_DLL} ${QT5_WIDGETS_DLL} ${QT5_OPENGL_DLL} ${QT5_PRINTSUPPORT_DLL} DESTINATION bin)
+    else ()
+        message(WARNING "Unable to find Qt5 DLL libraries")
+    endif ()
+endif ()
+
 # ######################################################################### #
 
 include(InstallRequiredSystemLibraries)
