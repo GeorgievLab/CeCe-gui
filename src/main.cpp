@@ -38,21 +38,6 @@
 
 /* ************************************************************************ */
 
-/**
- * @brief Returns plugins directory.
- *
- * @param app Executable path.
- * @param dir Directory to plugins.
- *
- * @return
- */
-cece::String getPluginsDirectory(cece::FilePath app, cece::FilePath dir) noexcept
-{
-    return (app.getParentPath() / dir).toString();
-}
-
-/* ************************************************************************ */
-
 int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);

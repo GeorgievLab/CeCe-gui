@@ -69,6 +69,21 @@ constexpr int MainWindow::MAX_RECENT_FILES;
 
 /* ************************************************************************ */
 
+/**
+* @brief Returns plugins directory.
+*
+* @param app Executable path.
+* @param dir Directory to plugins.
+*
+* @return
+*/
+String getPluginsDirectory(QString app, FilePath dir) noexcept
+{
+    return (FilePath(app.toStdString()).getParentPath() / dir).toString();
+}
+
+/* ************************************************************************ */
+
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -103,6 +118,10 @@ MainWindow::MainWindow(QWidget* parent)
     // Load directories for plugin manager
 #ifdef DIR_PLUGINS
     m_pluginManager.addDirectory(DIR_PLUGINS);
+#elif _WIN32
+    m_pluginManager.addDirectory(getPluginsDirectory(QCoreApplication::applicationFilePath(), "."));
+#else
+    m_pluginManager.addDirectory(getPluginsDirectory(QCoreApplication::applicationFilePath(), "../lib"));
 #endif
 
     // Load all plugins
