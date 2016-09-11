@@ -59,7 +59,7 @@ signals:
      * @param section Message section.
      * @param msg     Message to log.
      */
-    void append(Log::Type type, QString section, QString message);
+    void append(cece::Log::Type type, QString section, QString message);
 
 
 // Public Operations
@@ -73,7 +73,7 @@ public:
      * @param section Message section.
      * @param msg     Message to log.
      */
-    void write(Log::Type type, const String& section, const String& msg) override;
+    void write(cece::Log::Type type, const String& section, const String& msg) override;
 
 };
 
