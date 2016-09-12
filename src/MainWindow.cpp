@@ -88,8 +88,9 @@ MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , m_simulator(m_pluginManager.getRepository())
+    , m_stdOutStream(std::cout)
 {
-    qRegisterMetaType<Log::Type>("Log::Type");
+    qRegisterMetaType<Log::Type>("cece::Log::Type");
 
     ui->setupUi(this);
 
@@ -110,7 +111,8 @@ MainWindow::MainWindow(QWidget* parent)
 
     // Set log stream
     Log::setOutput(&m_logStream);
-    connect(&m_logStream, &LogStream::append, this, &MainWindow::logAppend);
+    connect(&m_logStream, &LogStream::append, this, &MainWindow::logAppendDetail);
+    connect(&m_stdOutStream, &StdOutStream::append, this, &MainWindow::logAppend);
 
     // Restore settings
     restoreSettings();
@@ -578,7 +580,17 @@ void MainWindow::visualizationLayerToggle(bool flag)
 
 /* ************************************************************************ */
 
-void MainWindow::logAppend(Log::Type type, QString section, QString message)
+void MainWindow::logAppend(QString msg)
+{
+    ui->textEditLog->append(msg);
+
+    QScrollBar* sb = ui->textEditLog->verticalScrollBar();
+    sb->setValue(sb->maximum());
+}
+
+/* ************************************************************************ */
+
+void MainWindow::logAppendDetail(Log::Type type, QString section, QString message)
 {
     QString msg;
 
@@ -596,10 +608,7 @@ void MainWindow::logAppend(Log::Type type, QString section, QString message)
 
     msg += message;
 
-    ui->textEditLog->append(msg);
-
-    QScrollBar* sb = ui->textEditLog->verticalScrollBar();
-    sb->setValue(sb->maximum());
+    logAppend(msg);
 }
 
 /* ************************************************************************ */

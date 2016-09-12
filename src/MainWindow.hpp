@@ -42,6 +42,7 @@
 #include "LogStream.hpp"
 #include "Simulator.hpp"
 #include "DataExportPlotFactory.hpp"
+#include "StdOutStream.hpp"
 
 /* ************************************************************************ */
 
@@ -276,11 +277,19 @@ public slots:
     /**
      * @brief A new message logged.
      *
+     * @param msg Message to log.
+     */
+    void logAppend(QString msg);
+
+
+    /**
+     * @brief A new message logged.
+     *
      * @param type    Message type.
      * @param section Message section.
      * @param msg     Message to log.
      */
-    void logAppend(Log::Type type, QString section, QString message);
+    void logAppendDetail(Log::Type type, QString section, QString message);
 
 
 // Public Operations
@@ -353,6 +362,9 @@ private:
 
     /// Output log stream.
     LogStream m_logStream;
+
+    /// Standard output redirect.
+    StdOutStream m_stdOutStream;
 
     /// Recent files action.
     QAction* m_recentFiles[MAX_RECENT_FILES];

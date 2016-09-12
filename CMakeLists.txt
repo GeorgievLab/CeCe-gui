@@ -115,6 +115,8 @@ set(SRCS
     src/DataExportPlot.cpp
     src/DataExportPlotFactory.hpp
     src/DataExportPlotFactory.cpp
+    src/StdOutStream.hpp
+    src/StdOutStream.cpp
     src/qcustomplot.h
     src/qcustomplot.cpp
 
