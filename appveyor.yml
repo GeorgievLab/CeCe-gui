@@ -1,5 +1,5 @@
 # ######################################################################### #
-# Georgiev Lab (c) 2015-2016                                                #
+# Georgiev Lab (c) 2015-2017                                                #
 # ######################################################################### #
 # Department of Cybernetics                                                 #
 # Faculty of Applied Sciences                                               #
@@ -31,13 +31,15 @@ environment:
     matrix:
         - GENERATOR: Visual Studio 14 2015 Win64
           DEPLOY: On
+          PACKAGE: win64
           QTDIR: C:\Qt\5.7\msvc2015_64
         - GENERATOR: Visual Studio 14 2015
-          DEPLOY: Off
+          DEPLOY: On
+          PACKAGE: win32
           QTDIR: C:\Qt\5.7\msvc2015
-        - GENERATOR: MinGW Makefiles
-          DEPLOY: Off
-          QTDIR: C:\Qt\5.7\mingw53_32
+#        - GENERATOR: MinGW Makefiles
+#          DEPLOY: Off
+#          QTDIR: C:\Qt\5.7\mingw53_32
 
 matrix:
     allow_failures:
@@ -47,6 +49,17 @@ matrix:
 branches:
     except:
         - travis-ci
+
+init:
+    - ps: >-
+        if ($env:APPVEYOR_REPO_TAG -eq "true")
+        {
+            Update-AppveyorBuild -Version "$env:APPVEYOR_REPO_TAG_NAME"
+        }
+        else
+        {
+            Update-AppveyorBuild -Version "$env:VERSION-$($env:APPVEYOR_REPO_COMMIT.substring(0,7))"
+        }
 
 install:
     - git submodule update --init --recursive
@@ -73,9 +86,9 @@ deploy:
       api_key:
           secure: iLOqXHWkZPY0aVN0pqYTyTqoD8+BMC0cT8rqAuPjoUd8BJSdTszxf1KKBau3VsVL
       subject: georgievlab
-      repo: CeCe-nighty
+      repo: CeCe-gui-ci
       version: 0.6.0
-      package: CeCe-gui
+      package: $(PACKAGE)
       publish: true
       override: true
       on:
