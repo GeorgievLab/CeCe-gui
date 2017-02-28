@@ -292,11 +292,32 @@ message("COMMIT: ${GIT_COMMIT}")
 message("BRANCH: ${GIT_BRANCH}")
 
 if (NOT GIT_TAG AND GIT_COMMIT AND GIT_BRANCH)
+    set(SYSTEM_NAME ${CMAKE_SYSTEM_NAME})
+    if (${SYSTEM_NAME} MATCHES "Windows")
+        if (CMAKE_CL_64)
+            set(SYSTEM_NAME "Win64")
+        else ()
+            set(SYSTEM_NAME "Win32")
+        endif ()
+    endif ()
+
     string(SUBSTRING "${GIT_COMMIT}" 0 7 COMMIT)
     set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_NAME}-${GIT_BRANCH}-${COMMIT}")
 endif ()
 
 # Configure file for travis-ci -> bintray deployment
+if (UNIX AND NOT APPLE)
+    set(BINTRAY_PLATFORM "linux-x64")
+elseif (APPLE)
+    set(BINTRAY_PLATFORM "macOS")
+endif ()
+
+if (NOT GIT_TAG AND GIT_COMMIT AND GIT_BRANCH)
+    set(BINTRAY_VERSION ${PROJECT_VERSION}-${COMMIT})
+else ()
+    set(BINTRAY_VERSION ${PROJECT_VERSION})
+endif ()
+
 configure_file(resources/descriptor.json.in descriptor.json @ONLY)
 
 # ######################################################################### #
