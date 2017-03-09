@@ -170,6 +170,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 if (APPLE)
     set_target_properties(${PROJECT_NAME} PROPERTIES
         MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/resources/Info.plist.in
+        MACOSX_BUNDLE_BUNDLE_NAME "CeCe"
     )
 endif ()
 
@@ -211,6 +212,7 @@ endif ()
 install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
+    BUNDLE DESTINATION .
 )
 
 install(FILES LICENSE.txt Copyright.txt README.md
