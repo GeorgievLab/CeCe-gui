@@ -1,5 +1,5 @@
 # ######################################################################### #
-# Georgiev Lab (c) 2015-2016                                                #
+# Georgiev Lab (c) 2015-2017                                                #
 # ######################################################################### #
 # Department of Cybernetics                                                 #
 # Faculty of Applied Sciences                                               #
@@ -69,7 +69,8 @@ before_install:
 install:
     - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew outdated cmake  || brew upgrade cmake  ; fi
     - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew outdated ccache || brew upgrade ccache ; fi
-    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew outdated qt5    || brew upgrade qt5    ; fi
+#    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew outdated qt5    || brew upgrade qt5    ; fi
+    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install qt5; fi
 
 before_script:
     - if [ "$TRAVIS_OS_NAME" == "linux" -a "$CXX" = "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
